@@ -13,6 +13,7 @@ def calculate(
 ):
 
     result = calculate_nutrition(
+        sport=data.sport,
         duration=data.duration,
         temperature=data.temperature,
         weight=data.weight,

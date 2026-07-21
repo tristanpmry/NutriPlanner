@@ -1,51 +1,77 @@
+from app.services.profiles import SPORT_PROFILES
+
+
+
 def calculate_nutrition(
+    sport,
     duration,
     temperature,
     weight,
     intensity="moderate"
 ):
 
-    # Glucides
-    if duration < 1.5:
-        carbs = 30
 
-    elif duration < 3:
-        carbs = 50
-
-    else:
-        carbs = 70
+    profile = SPORT_PROFILES.get(
+        sport,
+        SPORT_PROFILES["trail"]
+    )
 
 
-    # Hydratation
-    water = 500
+    carbs = profile["carbs_base"]
+
+    water = profile["water_base"]
+
+    sodium = profile["sodium_base"]
+
+
+
+    # Adaptation chaleur
 
     if temperature >= 25:
+
         water += 200
 
+        sodium += 200
+
+
+
+    # Adaptation intensité
 
     if intensity == "high":
+
+        carbs += 10
+
         water += 100
 
-
-    # Sodium
-    sodium = 500
-
-    if temperature >= 25:
-        sodium += 200
 
 
     return {
 
+
+        "sport": sport,
+
+
         "carbs_per_hour": carbs,
+
 
         "water_per_hour": water,
 
+
         "sodium_per_hour": sodium,
 
-        "total_carbs": carbs * duration,
 
-        "total_water": water * duration,
+        "total_carbs": round(
+            carbs * duration
+        ),
 
-        "total_sodium": sodium * duration
+
+        "total_water": round(
+            water * duration
+        ),
+
+
+        "total_sodium": round(
+            sodium * duration
+        )
 
     }

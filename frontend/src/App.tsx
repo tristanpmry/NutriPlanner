@@ -1,37 +1,33 @@
-import { useEffect, useState } from "react";
-import api from "./api/axios";
+import {
+  BrowserRouter,
+  Routes,
+  Route
+} from "react-router-dom";
+
+import CreatePlan from "./pages/CreatePlan";
 
 
 function App() {
 
-  const [message, setMessage] = useState("");
-
-
-  useEffect(() => {
-
-    api.get("/test")
-      .then(response => {
-        setMessage(response.data.message);
-      })
-      .catch(error => {
-        console.error(error);
-        setMessage("Erreur backend");
-      });
-
-  }, []);
-
 
   return (
-    <div>
-      <h1>
-        NutriPlanner
-      </h1>
 
-      <p>
-        {message}
-      </p>
-    </div>
+    <BrowserRouter>
+
+      <Routes>
+
+        <Route
+          path="/"
+          element={<CreatePlan />}
+        />
+
+      </Routes>
+
+
+    </BrowserRouter>
+
   );
+
 }
 
 
