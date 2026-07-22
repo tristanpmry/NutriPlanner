@@ -1,7 +1,8 @@
-from pydantic import BaseModel
+from dataclasses import dataclass
 
 
-class NutritionRequest(BaseModel):
+@dataclass
+class Activity:
 
     sport: str
 
