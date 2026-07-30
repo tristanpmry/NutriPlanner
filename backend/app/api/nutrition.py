@@ -1,36 +1,80 @@
 from fastapi import APIRouter
 
-from app.activities.models import Activity
-from app.nutrition.calculator import calculate_requirements
-from app.nutrition.planner import generate_plan
-from app.nutrition.schemas import NutritionRequest
+
+from app.models.activity import Activity
+
+
+from app.schemas.nutrition import (
+    NutritionRequest,
+    NutritionResponse
+)
+
+
+from app.services.nutrition_service import (
+    NutritionService
+)
+
+
 
 router = APIRouter()
 
 
-@router.post("/calculate")
-def calculate_nutrition(data: NutritionRequest):
+nutrition_service = NutritionService()
+
+
+
+@router.post(
+    "/calculate",
+    response_model=NutritionResponse
+)
+def calculate_nutrition(
+    request: NutritionRequest
+):
+
 
     activity = Activity(
-        sport=data.sport,
-        distance=data.distance,
-        elevation=data.elevation,
-        duration=data.duration,
-        temperature=data.temperature,
-        weight=data.weight,
-        intensity=data.intensity,
+
+        sport=request.sport,
+
+        distance=request.distance,
+
+        elevation=request.elevation,
+
+        duration=request.duration,
+
+        temperature=request.temperature,
+
+        weight=request.weight,
+
+        intensity=request.intensity
+
     )
 
-    requirements = calculate_requirements(activity)
 
-    plan = generate_plan(activity.duration, requirements["carbs_per_hour"])
+    result = (
+        nutrition_service.generate_plan(
+            activity
+        )
+    )
+
 
     return {
+
+
         "activity": {
-            "sport": activity.sport,
-            "distance": activity.distance,
-            "duration": activity.duration,
+
+            "sport": result.activity.sport,
+
+            "distance": result.activity.distance,
+
+            "duration": result.activity.duration
+
         },
-        "requirements": requirements,
-        "plan": plan,
+
+
+        "requirements": result.requirements,
+
+
+        "plan": result.plan.events
+
     }

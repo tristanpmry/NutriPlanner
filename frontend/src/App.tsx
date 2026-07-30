@@ -1,34 +1,105 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route
-} from "react-router-dom";
+import { useState } from "react";
 
-import CreatePlan from "./pages/CreatePlan";
+import ActivityForm from "./components/ActivityForm";
+
+import NutritionSummary from "./components/NutritionSummary";
+
+import NutritionPlan from "./components/NutritionPlan";
+
+import type {
+    NutritionRequest,
+} from "./types/nutrition";
+
+
+import {
+    calculateNutrition
+} from "./api/nutrition";
+
+
+import type {
+    NutritionResponse
+} from "./types/nutrition";
+
 
 
 function App() {
 
 
-  return (
+    const [
+        result,
+        setResult
+    ] = useState<NutritionResponse | null>(null);
 
-    <BrowserRouter>
+    const [loading, setLoading] =
+    useState(false);
 
-      <Routes>
+    async function generate(
+    data: NutritionRequest
+) {
 
-        <Route
-          path="/"
-          element={<CreatePlan />}
-        />
+    setLoading(true);
 
-      </Routes>
+    try {
 
+        const response =
+            await calculateNutrition(data);
 
-    </BrowserRouter>
+        setResult(response);
 
-  );
+    }
+    catch(error){
+
+        console.error(error);
+
+    }
+    finally {
+
+        setLoading(false);
+
+    }
 
 }
 
+    return (
 
+<div>
+
+    <h1>
+        NutriPlanner
+    </h1>
+
+
+    <ActivityForm
+        onGenerate={generate}
+        loading={loading}
+    />
+
+
+    {
+        result &&
+
+        <>
+
+            <NutritionSummary
+                requirements={
+                    result.requirements
+                }
+            />
+
+
+            <NutritionPlan
+                events={
+                    result.plan
+                }
+            />
+
+        </>
+
+    }
+
+
+</div>
+
+);
+}
 export default App;

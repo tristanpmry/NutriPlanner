@@ -5,7 +5,6 @@ from app.api import nutrition
 
 app = FastAPI(title="NutriPlanner API")
 
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -14,11 +13,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-app.include_router(nutrition.router, prefix="/nutrition", tags=["nutrition"])
+app.include_router(
+    nutrition.router,
+    prefix="/nutrition",
+    tags=["Nutrition"],
+)
 
 
 @app.get("/")
 def root():
-
     return {"message": "NutriPlanner API running"}
